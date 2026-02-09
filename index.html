@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For HIS_NAME 🤍</title>
+
+<style>
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Georgia', serif;
+  background: linear-gradient(to bottom, #fff5f7, #ffe3ec);
+  color: #5a3e4d;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+section {
+  padding: 100px 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+h1, h2 { font-weight: 500; }
+
+button {
+  padding: 12px 25px;
+  background: #ff8fab;
+  border: none;
+  color: white;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px;
+  transition: 0.3s;
+}
+
+button:hover { background: #ffb3c6; }
+
+#introScreen {
+  position: fixed;
+  background: #fff5f7;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.music-player {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  padding: 15px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(255,182,193,0.4);
+  font-size: 14px;
+}
+
+.music-player input {
+  width: 100px;
+}
+
+.heart {
+  position: fixed;
+  top: -10px;
+  font-size: 20px;
+  animation: float 6s linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(110vh); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div id="introScreen">
+  <h1>Will you be my Valentine? 🤍</h1>
+  <button onclick="enterSite()">Yes 🤍</button>
+  <button onclick="sayNo()">No</button>
+  <p id="noMessage"></p>
+</div>
+
+<!-- MUSIC PLAYER UI -->
+<div class="music-player">
+  <div id="nowPlaying">Now Playing: </div>
+  <input type="range" min="0" max="1" step="0.01" id="volumeSlider">
+</div>
+
+<audio id="bgMusic"></audio>
+
+<section>
+  <h1>Hi HIS_NAME 🤍</h1>
+  <p>This whole universe is for you.</p>
+</section>
+
+<section>
+  <h2>Our Story</h2>
+  <p>Write your story here.</p>
+</section>
+
+<section id="letterSection">
+  <h2>A Letter For You</h2>
+  <p>Write your emotional letter here.</p>
+</section>
+
+<script>
+const playlist = [
+  {src: "song1.mp3", name: "Song Title 1"},
+  {src: "song2.mp3", name: "Song Title 2"},
+  {src: "song3.mp3", name: "Song Title 3"}
+];
+
+let currentSong = 0;
+let musicStarted = false;
+const audio = document.getElementById("bgMusic");
+const nowPlaying = document.getElementById("nowPlaying");
+const volumeSlider = document.getElementById("volumeSlider");
+
+volumeSlider.value = 0.7;
+audio.volume = 0.7;
+
+volumeSlider.addEventListener("input", function() {
+  audio.volume = this.value;
+});
+
+function playSong(index) {
+  audio.src = playlist[index].src;
+  nowPlaying.innerText = "Now Playing: " + playlist[index].name;
+  audio.play();
+}
+
+audio.addEventListener("ended", function() {
+  fadeOut(() => {
+    currentSong++;
+    if (currentSong >= playlist.length) {
+      currentSong = 0;
+    }
+    playSong(currentSong);
+    fadeIn();
+  });
+});
+
+function fadeOut(callback) {
+  let fade = setInterval(() => {
+    if (audio.volume > 0.05) {
+      audio.volume -= 0.05;
+    } else {
+      clearInterval(fade);
+      callback();
+    }
+  }, 100);
+}
+
+function fadeIn() {
+  let fade = setInterval(() => {
+    if (audio.volume < volumeSlider.value) {
+      audio.volume = Math.min(audio.volume + 0.05, volumeSlider.value);
+    } else {
+      clearInterval(fade);
+    }
+  }, 100);
+}
+
+function enterSite() {
+  document.getElementById("introScreen").style.display = "none";
+  if (!musicStarted) {
+    playSong(currentSong);
+    musicStarted = true;
+  }
+}
+
+function sayNo() {
+  document.getElementById("noMessage").innerText = "Try again 🤍";
+}
+
+window.addEventListener("scroll", function() {
+  const letterSection = document.getElementById("letterSection");
+  const rect = letterSection.getBoundingClientRect();
+  if (rect.top < window.innerHeight && rect.bottom >= 0) {
+    audio.volume = 0.3;
+  } else {
+    audio.volume = volumeSlider.value;
+  }
+});
+
+setInterval(() => {
+  let heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "🤍";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 6000);
+}, 800);
+</script>
+
+</body>
+</html>
